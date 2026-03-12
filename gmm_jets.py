@@ -41,7 +41,7 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
     vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
 
     model = GeneralMixtureModel(
-        [Normal()] * nMaxwellians, verbose=True, intertia=inertia
+        [Normal()] * nMaxwellians, verbose=True, inertia=inertia
     ).fit(vc_coord_arr, sample_weight=vc_val_arr)
 
     predicted_cluster = model.predict(vc_coord_arr)
