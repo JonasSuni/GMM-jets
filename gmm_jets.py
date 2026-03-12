@@ -36,7 +36,7 @@ def read_file(cellid, fnr):
     return (vc_coord_arr, vc_val_arr)
 
 
-def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False):
+def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0):
 
     outdir = wrkdir_DNR + "vdf_gmm/"
 
@@ -51,7 +51,7 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False):
     distribs = []
     for idx in range(nMaxwellians):
         vrand = np.random.uniform(low=-1, high=1, size=3) * 0.1 * vmeanmag
-        distribs.append(Normal(means=vmean + vrand))
+        distribs.append(Normal(means=vmean + vrand, min_cov=mincov))
 
     model = GeneralMixtureModel(distribs, verbose=True, inertia=inertia).fit(
         vc_coord_arr, sample_weight=vc_val_arr
@@ -90,7 +90,7 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False):
     )
 
 
-def process_all_gmm(nMaxwellians=1, inertia=0.0):
+def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0):
 
     dirlist = os.listdir(wrkdir_DNR + "vdf_txts")
     cellids = np.array([d[1:] for d in dirlist]).astype(int)
@@ -98,4 +98,4 @@ def process_all_gmm(nMaxwellians=1, inertia=0.0):
         fnrlist = os.listdir(wrkdir_DNR + "vdf_txts/c{}".format(ci))
         fnrs = np.array([f.split(".")[0][1:] for f in fnrlist])
         for fnr in fnrs:
-            fit_gmm(ci, fnr, nMaxwellians, inertia=inertia)
+            fit_gmm(ci, fnr, nMaxwellians, inertia=inertia, mincov=mincov)
