@@ -34,15 +34,15 @@ def read_file(cellid, fnr):
     return (vc_coord_arr, vc_val_arr)
 
 
-def fit_gmm(cellid, fnr, nMaxwellians):
+def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
 
     outdir = wrkdir_DNR + "vdf_gmm/"
 
     vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
 
-    model = GeneralMixtureModel([Normal()] * nMaxwellians, verbose=True).fit(
-        vc_coord_arr, sample_weight=vc_val_arr
-    )
+    model = GeneralMixtureModel(
+        [Normal()] * nMaxwellians, verbose=True, intertia=inertia
+    ).fit(vc_coord_arr, sample_weight=vc_val_arr)
 
     predicted_cluster = model.predict(vc_coord_arr)
 
@@ -74,7 +74,7 @@ def fit_gmm(cellid, fnr, nMaxwellians):
     )
 
 
-def process_all_gmm(nMaxwellians=1):
+def process_all_gmm(nMaxwellians=1, inertia=0.0):
 
     dirlist = os.listdir(wrkdir_DNR + "vdf_txts")
     cellids = np.array([d[1:] for d in dirlist]).astype(int)
@@ -82,4 +82,4 @@ def process_all_gmm(nMaxwellians=1):
         fnrlist = os.listdir(wrkdir_DNR + "vdf_txts/c{}".format(ci))
         fnrs = np.array([f.split(".")[0][1:] for f in fnrlist])
         for fnr in fnrs:
-            fit_gmm(ci, fnr, nMaxwellians)
+            fit_gmm(ci, fnr, nMaxwellians, inertia=inertia)
