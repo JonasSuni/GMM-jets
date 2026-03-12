@@ -40,9 +40,18 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
 
     vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
 
-    model = GeneralMixtureModel(
-        [Normal()] * nMaxwellians, verbose=True, inertia=inertia
-    ).fit(vc_coord_arr, sample_weight=vc_val_arr)
+    vmean = np.nanmean(vc_coord_arr, axis=0)
+    vmeanmag = np.linalg.norm(vmean)
+    vvar = np.nanvar(vc_coord_arr, axis=0)
+
+    distribs = []
+    for idx in range(nMaxwellians):
+        vrand = np.random.uniform(low=-1, high=1, size=3) * 0.1 * vmeanmag
+        distribs.append(Normal(means=vmean + vrand))
+
+    model = GeneralMixtureModel(distribs, verbose=True, inertia=inertia).fit(
+        vc_coord_arr, sample_weight=vc_val_arr
+    )
 
     predicted_cluster = model.predict(vc_coord_arr)
 
