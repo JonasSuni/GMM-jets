@@ -36,7 +36,7 @@ def read_file(cellid, fnr):
     return (vc_coord_arr, vc_val_arr)
 
 
-def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
+def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False):
 
     outdir = wrkdir_DNR + "vdf_gmm/"
 
@@ -56,6 +56,8 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
     model = GeneralMixtureModel(distribs, verbose=True, inertia=inertia).fit(
         vc_coord_arr, sample_weight=vc_val_arr
     )
+    if debug:
+        return model
 
     predicted_cluster = model.predict(vc_coord_arr)
 
