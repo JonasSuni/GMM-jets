@@ -64,7 +64,7 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
     for idx in range(nMaxwellians):
         means = model.distributions[idx].means.numpy()
         covs = model.distributions[idx].covs.numpy()
-        print("Mean:\n{}\nCovariance:\n{}\n".format(means, covs))
+        print("Mean:\n{}\nCovariance:\n{}\n".format(means / 1e3, covs * m_p / kb / 1e6))
         out_arr.append(np.append(means, covs.flatten()))
 
     out_arr = np.array(out_arr)
