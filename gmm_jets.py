@@ -77,7 +77,7 @@ def fit_gmm(cellid, fnr, nMaxwellians):
     np.save(outdir + "n{}/c{}/f{}".format(cellid, fnr), out_arr)
 
 
-def process_all_gmm(nMaxwellians=1, prepost_time=30):
+def process_all_gmm(nMaxwellians=1):
 
     dirlist = os.listdir(wrkdir_DNR + "vdf_txts")
     cellids = np.array([d[1:] for d in dirlist]).astype(int)
