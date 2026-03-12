@@ -56,8 +56,6 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False):
     model = GeneralMixtureModel(distribs, verbose=True, inertia=inertia).fit(
         vc_coord_arr, sample_weight=vc_val_arr
     )
-    if debug:
-        return model
 
     predicted_cluster = model.predict(vc_coord_arr)
 
@@ -70,6 +68,9 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False):
         out_arr.append(np.append(means, covs.flatten()))
 
     out_arr = np.array(out_arr)
+
+    if debug:
+        return model
 
     if not os.path.exists(outdir + "n{}".format(nMaxwellians)):
         try:
