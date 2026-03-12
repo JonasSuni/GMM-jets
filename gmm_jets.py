@@ -47,7 +47,9 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
     distribs = []
     for idx in range(nMaxwellians):
         vrand = np.random.uniform(low=-1, high=1, size=3) * 0.1 * vmeanmag
-        distribs.append(Normal(means=vmean + vrand, covs=vvar, covariance_type="diag"))
+        distribs.append(
+            Normal(means=vmean + vrand, covs=vvar, covariance_type="sphere")
+        )
 
     model = GeneralMixtureModel(distribs, verbose=True, inertia=inertia).fit(
         vc_coord_arr, sample_weight=vc_val_arr
