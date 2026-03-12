@@ -62,7 +62,7 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0):
     out_arr = []
 
     for idx in range(nMaxwellians):
-        weight = model.prior.numpy()[idx]
+        weight = model.priors.numpy()[idx]
         means = model.distributions[idx].means.numpy()
         covs = model.distributions[idx].covs.numpy()
         print(
