@@ -53,10 +53,14 @@ def fit_gmm(cellid, fnr, nMaxwellians):
         covs = model.distributions[idx].covs.numpy().flatten()
         print(means.shape)
         print(covs.shape)
+        print(means)
+        print(covs)
+        print(np.append(means, covs).flatten())
         out_arr.append([np.append(means, covs).flatten()])
 
     out_arr = np.array(out_arr)
     print(out_arr.shape)
+    print(out_arr)
 
     if not os.path.exists(outdir + "n{}".format(nMaxwellians)):
         try:
