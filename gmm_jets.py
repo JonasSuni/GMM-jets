@@ -46,17 +46,17 @@ def fit_gmm(cellid, fnr, nMaxwellians):
 
     predicted_cluster = model.predict(vc_coord_arr)
 
-    covs_list = []
-    means_list = []
+    out_arr = []
 
     for idx in range(nMaxwellians):
-        covs_list.append(model.distributions[idx].covs.numpy())
-        means_list.append(model.distributions[idx].covs.numpy())
-
-    covs_arr = np.array(covs_list)
-    means_arr = np.array(means_list)
-
-    out_arr = [covs_arr, means_arr, predicted_cluster, vc_coord_arr, vc_val_arr]
+        out_arr.append(
+            [
+                np.append(
+                    model.distributions[idx].covs.numpy(),
+                    model.distributions[idx].covs.numpy().flatten(),
+                )
+            ]
+        )
 
     if not os.path.exists(outdir + "n{}".format(nMaxwellians)):
         try:
@@ -70,7 +70,12 @@ def fit_gmm(cellid, fnr, nMaxwellians):
         except OSError:
             pass
 
-    np.save(outdir + "n{}/c{}/f{}".format(nMaxwellians, cellid, fnr), out_arr)
+    np.savetxt(
+        outdir + "n{}/c{}/f{}.fit".format(nMaxwellians, cellid, fnr), np.array(out_arr)
+    )
+    np.savetxt(
+        outdir + "n{}/c{}/f{}.pred".format(nMaxwellians, cellid, fnr), predicted_cluster
+    )
 
 
 def process_all_gmm(nMaxwellians=1):
