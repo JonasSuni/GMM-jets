@@ -43,13 +43,12 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
     vmean = np.nanmean(vc_coord_arr, axis=0)
     vmeanmag = np.linalg.norm(vmean)
     vvar = np.sum(np.nanvar(vc_coord_arr, axis=0)) / 3.0
+    vcov = np.eye(3, dtype=float) * vvar
 
     distribs = []
     for idx in range(nMaxwellians):
         vrand = np.random.uniform(low=-1, high=1, size=3) * 0.1 * vmeanmag
-        distribs.append(
-            Normal(means=vmean + vrand, covs=vvar, covariance_type="sphere")
-        )
+        distribs.append(Normal(means=vmean + vrand, covs=vcov, covariance_type="full"))
 
     model = GeneralMixtureModel(distribs, verbose=True, inertia=inertia).fit(
         vc_coord_arr, sample_weight=vc_val_arr
