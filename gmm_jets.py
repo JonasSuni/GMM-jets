@@ -41,11 +41,15 @@ def fit_gmm(cellid, fnr, nMaxwellians):
     vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
     print(vc_coord_arr.shape)
     print(vc_val_arr.shape)
-    print([Normal()] * nMaxwellians)
 
-    model = GeneralMixtureModel([Normal()] * nMaxwellians, verbose=True).fit(
-        vc_coord_arr, sample_weight=vc_val_arr
-    )
+    if nMaxwellians == 1:
+        model = GeneralMixtureModel(Normal(), verbose=True).fit(
+            vc_coord_arr, sample_weight=vc_val_arr
+        )
+    else:
+        model = GeneralMixtureModel([Normal()] * nMaxwellians, verbose=True).fit(
+            vc_coord_arr, sample_weight=vc_val_arr
+        )
 
     predicted_cluster = model.predict(vc_coord_arr)
 
@@ -59,9 +63,7 @@ def fit_gmm(cellid, fnr, nMaxwellians):
     covs_arr = np.array(covs_list)
     means_arr = np.array(means_list)
 
-    out_arr = np.array(
-        [covs_arr, means_arr, predicted_cluster, vc_coord_arr, vc_val_arr]
-    )
+    out_arr = [covs_arr, means_arr, predicted_cluster, vc_coord_arr, vc_val_arr]
 
     if not os.path.exists(outdir + "n{}".format(nMaxwellians)):
         try:
