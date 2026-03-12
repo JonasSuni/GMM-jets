@@ -66,7 +66,7 @@ def fit_gmm(cellid, fnr, nMaxwellians):
     covs_arr = np.array(covs_list)
     means_arr = np.array(means_list)
     
-    out_arr = np.array([covs_arr,means_arr,predicted_cluster])
+    out_arr = np.array([covs_arr,means_arr,predicted_cluster,vc_coord_arr,vc_val_arr])
 
     if not os.path.exists(outdir+"n{}".format(nMaxwellians)):
         try:
