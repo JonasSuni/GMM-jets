@@ -60,7 +60,8 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0):
             vc_coord_arr, sample_weight=vc_val_arr
         )
 
-    predicted_cluster = model.predict(vc_coord_arr)
+    if nMaxwellians > 1:
+        predicted_cluster = model.predict(vc_coord_arr)
 
     out_arr = []
 
@@ -93,9 +94,11 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0):
             pass
 
     np.savetxt(outdir + "n{}/c{}/f{}.fit".format(nMaxwellians, cellid, fnr), out_arr)
-    np.savetxt(
-        outdir + "n{}/c{}/f{}.pred".format(nMaxwellians, cellid, fnr), predicted_cluster
-    )
+    if nMaxwellians > 1:
+        np.savetxt(
+            outdir + "n{}/c{}/f{}.pred".format(nMaxwellians, cellid, fnr),
+            predicted_cluster,
+        )
 
 
 def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0):
