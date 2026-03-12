@@ -56,7 +56,7 @@ def fit_gmm(cellid, fnr, nMaxwellians):
         print(means)
         print(covs)
         print(np.append(means, covs).flatten())
-        out_arr.append([np.append(means, covs).flatten()])
+        out_arr.append(np.append(means, covs).flatten())
 
     out_arr = np.array(out_arr)
     print(out_arr.shape)
