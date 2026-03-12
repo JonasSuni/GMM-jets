@@ -28,6 +28,8 @@ def read_file(cellid, fnr):
     txtdir = wrkdir_DNR + "vdf_txts/"
 
     vdfdata = np.loadtxt(txtdir + "c{}/f{}.txt".format(int(cellid), int(fnr)))
+    if not vdfdata.size:
+        raise Exception
     vc_coord_arr = vdfdata[:, [0, 1, 2]]
     vc_val_arr = vdfdata[:, 3]
 
@@ -38,7 +40,10 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
 
     outdir = wrkdir_DNR + "vdf_gmm/"
 
-    vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
+    try:
+        vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
+    except:
+        return None
 
     vmean = np.nanmean(vc_coord_arr, axis=0)
     vmeanmag = np.linalg.norm(vmean)
