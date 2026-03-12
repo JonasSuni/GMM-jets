@@ -52,7 +52,7 @@ def fit_gmm(cellid, fnr, nMaxwellians):
         out_arr.append(
             [
                 np.append(
-                    model.distributions[idx].covs.numpy(),
+                    model.distributions[idx].covs.numpy().flatten(),
                     model.distributions[idx].covs.numpy().flatten(),
                 )
             ]
