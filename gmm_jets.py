@@ -39,17 +39,10 @@ def fit_gmm(cellid, fnr, nMaxwellians):
     outdir = wrkdir_DNR + "vdf_gmm/"
 
     vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
-    print(vc_coord_arr.shape)
-    print(vc_val_arr.shape)
 
-    if nMaxwellians == 1:
-        model = GeneralMixtureModel(Normal(), verbose=True).fit(
-            vc_coord_arr, sample_weight=vc_val_arr
-        )
-    else:
-        model = GeneralMixtureModel([Normal()] * nMaxwellians, verbose=True).fit(
-            vc_coord_arr, sample_weight=vc_val_arr
-        )
+    model = GeneralMixtureModel([Normal()] * nMaxwellians, verbose=True).fit(
+        vc_coord_arr, sample_weight=vc_val_arr
+    )
 
     predicted_cluster = model.predict(vc_coord_arr)
 
@@ -77,7 +70,7 @@ def fit_gmm(cellid, fnr, nMaxwellians):
         except OSError:
             pass
 
-    np.save(outdir + "n{}/c{}/f{}".format(cellid, fnr), out_arr)
+    np.save(outdir + "n{}/c{}/f{}".format(nMaxwellians, cellid, fnr), out_arr)
 
 
 def process_all_gmm(nMaxwellians=1):
