@@ -66,9 +66,14 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0):
     out_arr = []
 
     for idx in range(nMaxwellians):
-        weight = model.priors.numpy()[idx]
-        means = model.distributions[idx].means.numpy()
-        covs = model.distributions[idx].covs.numpy()
+        if nMaxwellians > 1:
+            weight = model.priors.numpy()[idx]
+            means = model.distributions[idx].means.numpy()
+            covs = model.distributions[idx].covs.numpy()
+        else:
+            weight = 1
+            means = model.means.numpy()
+            covs = model.covs.numpy()
         print(
             "Weight: {}\nMean: {}\nCovariance:\n{}\n".format(
                 weight, means / 1e3, covs * m_p / kb / 1e6
