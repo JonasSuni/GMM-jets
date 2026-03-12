@@ -41,7 +41,6 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
     vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
 
     vmean = np.nanmean(vc_coord_arr, axis=0)
-    print(vmean)
     vmeanmag = np.linalg.norm(vmean)
 
     distribs = []
@@ -58,9 +57,10 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
     out_arr = []
 
     for idx in range(nMaxwellians):
-        means = model.distributions[idx].means.numpy().flatten()
-        covs = model.distributions[idx].covs.numpy().flatten()
-        out_arr.append(np.append(means, covs).flatten())
+        means = model.distributions[idx].means.numpy()
+        covs = model.distributions[idx].covs.numpy()
+        print("Mean: {}, covariance: {}".format(means, covs))
+        out_arr.append(np.append(means, covs.flatten()))
 
     out_arr = np.array(out_arr)
 
