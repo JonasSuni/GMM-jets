@@ -39,6 +39,8 @@ def fit_gmm(cellid, fnr, nMaxwellians):
     outdir = wrkdir_DNR + "vdf_gmm/"
 
     vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
+    print(vc_coord_arr.shape)
+    print(vc_val_arr.shape)
 
     model = GeneralMixtureModel([Normal()] * nMaxwellians, verbose=True).fit(
         vc_coord_arr, sample_weight=vc_val_arr
