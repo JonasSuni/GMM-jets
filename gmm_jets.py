@@ -12,17 +12,8 @@ q_p = 1.602176634e-19
 mu0 = 1.25663706212e-06
 kb = 1.380649e-23
 
-wrkdir_DNR = os.environ["WRK"] + "/"
+# wrkdir_DNR = os.environ["WRK"] + "/"
 homedir = os.environ["HOME"] + "/"
-try:
-    vlasdir = os.environ["VLAS"]
-except:
-    vlasdir = "/proj/vlasov"
-
-try:
-    tavgdir = os.environ["TAVG"] + "/"
-except:
-    tavgdir = wrkdir_DNR + "tavg/"
 
 # wrkdir_DNR = wrkdir_DNR + "jets_3D/"
 wrkdir_NEW = "/turso/home/jesuni/wrk/jets_3D/"
@@ -30,10 +21,6 @@ wrkdir_DNR = wrkdir_NEW
 wrkdir_other = os.environ["WRK"] + "/"
 
 bulkpath_FIF = "/wrk-vakka/group/spacephysics/vlasiator/3D/FIF/bulk1/"
-
-plot_B_vdfs = False
-slicethick_g = 1
-calc_rel_dens_g = True
 
 
 def read_file(cellid, fnr):
@@ -46,13 +33,16 @@ def read_file(cellid, fnr):
 
     return (vc_coord_arr, vc_val_arr)
 
+
 def fit_gmm(cellid, fnr, nMaxwellians):
 
     outdir = wrkdir_DNR + "vdf_gmm/"
 
     vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
 
-    model = GeneralMixtureModel([Normal()]*nMaxwellians, verbose=True).fit(vc_coord_arr, model_weight=vc_val_arr)
+    model = GeneralMixtureModel([Normal()] * nMaxwellians, verbose=True).fit(
+        vc_coord_arr, model_weight=vc_val_arr
+    )
 
     predicted_cluster = model.predict(vc_coord_arr)
 
@@ -65,19 +55,49 @@ def fit_gmm(cellid, fnr, nMaxwellians):
 
     covs_arr = np.array(covs_list)
     means_arr = np.array(means_list)
-    
-    out_arr = np.array([covs_arr,means_arr,predicted_cluster,vc_coord_arr,vc_val_arr])
 
-    if not os.path.exists(outdir+"n{}".format(nMaxwellians)):
+    out_arr = np.array(
+        [covs_arr, means_arr, predicted_cluster, vc_coord_arr, vc_val_arr]
+    )
+
+    if not os.path.exists(outdir + "n{}".format(nMaxwellians)):
         try:
-            os.makedirs(outdir+"n{}".format(nMaxwellians))
+            os.makedirs(outdir + "n{}".format(nMaxwellians))
         except OSError:
             pass
 
-    if not os.path.exists(outdir+"n{}/c{}".format(nMaxwellians,cellid)):
+    if not os.path.exists(outdir + "n{}/c{}".format(nMaxwellians, cellid)):
         try:
-            os.makedirs(outdir+"n{}/c{}".format(nMaxwellians,cellid))
+            os.makedirs(outdir + "n{}/c{}".format(nMaxwellians, cellid))
         except OSError:
             pass
 
-    np.save(outdir+"n{}/c{}/f{}".format(cellid,fnr),out_arr)
+    np.save(outdir + "n{}/c{}/f{}".format(cellid, fnr), out_arr)
+
+
+def process_all_gmm(nMaxwellians=1, prepost_time=30):
+
+    archer_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/archer_intervals.txt", dtype=int
+    )
+    koller_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/koller_intervals.txt", dtype=int
+    )
+    archerkoller_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/archerkoller_intervals.txt", dtype=int
+    )
+
+    for p in archer_data:
+        ci, t0, t1, tjet = p
+        for fnr in np.arange(t0 - prepost_time, t1 + prepost_time + 0.1, 1, dtype=int):
+            fit_gmm(ci, fnr, nMaxwellians)
+
+    for p in koller_data:
+        ci, t0, t1, tjet = p
+        for fnr in np.arange(t0 - prepost_time, t1 + prepost_time + 0.1, 1, dtype=int):
+            fit_gmm(ci, fnr, nMaxwellians)
+
+    for p in archerkoller_data:
+        ci, t0, t1, tjet = p
+        for fnr in np.arange(t0 - prepost_time, t1 + prepost_time + 0.1, 1, dtype=int):
+            fit_gmm(ci, fnr, nMaxwellians)
