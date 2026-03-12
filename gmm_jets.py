@@ -77,27 +77,10 @@ def fit_gmm(cellid, fnr, nMaxwellians):
 
 def process_all_gmm(nMaxwellians=1, prepost_time=30):
 
-    archer_data = np.loadtxt(
-        wrkdir_DNR + "txts/jet_intervals/archer_intervals.txt", dtype=int
-    )
-    koller_data = np.loadtxt(
-        wrkdir_DNR + "txts/jet_intervals/koller_intervals.txt", dtype=int
-    )
-    archerkoller_data = np.loadtxt(
-        wrkdir_DNR + "txts/jet_intervals/archerkoller_intervals.txt", dtype=int
-    )
-
-    for p in archer_data:
-        ci, t0, t1, tjet = p
-        for fnr in np.arange(t0 - prepost_time, t1 + prepost_time + 0.1, 1, dtype=int):
-            fit_gmm(ci, fnr, nMaxwellians)
-
-    for p in koller_data:
-        ci, t0, t1, tjet = p
-        for fnr in np.arange(t0 - prepost_time, t1 + prepost_time + 0.1, 1, dtype=int):
-            fit_gmm(ci, fnr, nMaxwellians)
-
-    for p in archerkoller_data:
-        ci, t0, t1, tjet = p
-        for fnr in np.arange(t0 - prepost_time, t1 + prepost_time + 0.1, 1, dtype=int):
+    dirlist = os.listdir(wrkdir_DNR + "vdf_txts")
+    cellids = np.array([d[1:] for d in dirlist]).astype(int)
+    for ci in cellids:
+        fnrlist = os.listdir(wrkdir_DNR + "vdf_txts/c{}".format(ci))
+        fnrs = np.array([f.split(".")[0][1:] for f in fnrlist])
+        for fnr in fnrs:
             fit_gmm(ci, fnr, nMaxwellians)
