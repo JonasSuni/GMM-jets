@@ -42,7 +42,7 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0):
 
     vmean = np.nanmean(vc_coord_arr, axis=0)
     vmeanmag = np.linalg.norm(vmean)
-    vvar = np.trace(np.nanvar(vc_coord_arr, axis=0)) / 3.0
+    vvar = np.sum(np.nanvar(vc_coord_arr, axis=0)) / 3.0
 
     distribs = []
     for idx in range(nMaxwellians):
