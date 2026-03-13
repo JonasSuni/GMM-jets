@@ -59,8 +59,9 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, ski
 
     distribs = []
     for idx in range(nMaxwellians):
-        vrand = np.random.uniform(low=-1, high=1, size=3) * 0.1 * vmeanmag
-        distribs.append(Normal(means=vmean + vrand, min_cov=mincov))
+        # vrand = np.random.uniform(low=-1, high=1, size=3) * 0.1 * vmeanmag
+        # distribs.append(Normal(means=vmean + vrand, min_cov=mincov))
+        distribs.append(Normal(means=det_means, min_cov=mincov))
 
     if nMaxwellians == 1:
         model = distribs[0].fit(vc_coord_arr, sample_weight=vc_val_arr)
