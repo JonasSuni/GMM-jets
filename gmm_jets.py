@@ -36,10 +36,14 @@ def read_file(cellid, fnr):
     return (vc_coord_arr, vc_val_arr)
 
 
-def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0,skip=True):
+def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, skip=True):
 
     outdir = wrkdir_DNR + "vdf_gmm/"
-    if os.path.isfile(outdir + "n{}/c{}/f{}.fit".format(nMaxwellians, cellid, fnr)) and skip:
+    if (
+        os.path.isfile(outdir + "n{}/c{}/f{}.fit".format(nMaxwellians, cellid, fnr))
+        and skip
+        and not debug
+    ):
         print("File already exists and skip is True, exiting.")
         return None
 
