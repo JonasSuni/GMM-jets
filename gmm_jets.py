@@ -55,6 +55,8 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, ski
     vmean = np.nanmean(vc_coord_arr, axis=0)
     vmeanmag = np.linalg.norm(vmean)
 
+    det_means = [[-750e3, 0, 0], [-187.5e3, 0, 0], [650e3, -375e3, 0], [0, 0, 0]]
+
     distribs = []
     for idx in range(nMaxwellians):
         vrand = np.random.uniform(low=-1, high=1, size=3) * 0.1 * vmeanmag
