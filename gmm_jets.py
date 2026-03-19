@@ -93,6 +93,11 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, ski
 
     out_arr = np.array(out_arr)
 
+    loglikelihood = model.summarize(
+        vc_coord_arr, sample_weight=vc_val_arr, priors=model.priors
+    )
+    print("Log likelihood is {}".format(loglikelihood))
+
     if debug:
         if nMaxwellians > 1:
             return (
