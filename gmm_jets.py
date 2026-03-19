@@ -82,8 +82,6 @@ def fit_gmm(
 
     distribs = []
     for idx in range(nMaxwellians):
-        # vrand = np.random.uniform(low=-1, high=1, size=3) * 0.1 * vmeanmag
-        # distribs.append(Normal(means=vmean + vrand, min_cov=mincov))
         distribs.append(
             Normal(
                 means=det_means[idx],
@@ -139,9 +137,7 @@ def fit_gmm(
         if nMaxwellians > 1:
             return (
                 model,
-                model.predict(vc_coord_arr),
-                model.predict_proba(vc_coord_arr),
-                model.predict_log_proba(vc_coord_arr),
+                vc_coord_arr,
             )
         else:
             return model
@@ -181,5 +177,5 @@ def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True, maxiter=
                 inertia=inertia,
                 mincov=mincov,
                 skip=skip,
-                maxiter=1000,
+                maxiter=maxiter,
             )
