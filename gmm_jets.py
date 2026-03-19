@@ -78,7 +78,7 @@ def fit_gmm(
     onemodel = Normal().fit(vc_coord_arr, sample_weight=vc_val_arr)
     onecovs = onemodel.covs
 
-    det_means = [[-750e3, 0, 0], [-187.5e3, 0, 0], [650e3, -375e3, 0], [0, 0, 0]]
+    det_means = [[-750e3, 0, 0], [-187.5e3, 0, 0], [650e3, -375e3, 0], [0.0, 0.0, 0.0]]
 
     distribs = []
     for idx in range(nMaxwellians):
