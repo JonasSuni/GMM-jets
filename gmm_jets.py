@@ -131,7 +131,11 @@ def fit_gmm(
     print("Log-likelihood is {}".format(loglikelihood))
     print(
         "Log-likelihood is also {}".format(
-            model.summarize(vc_coord_arr, sample_weight=vc_val_arr)
+            model.summarize(
+                vc_coord_arr,
+                sample_weight=vc_val_arr,
+                priors=model.predict_proba(vc_coord_arr),
+            )
         )
     )
 
