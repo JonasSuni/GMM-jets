@@ -47,7 +47,16 @@ def evaluate_maxwellian(X, mean, cov):
     return res
 
 
-def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, skip=True):
+def fit_gmm(
+    cellid,
+    fnr,
+    nMaxwellians,
+    inertia=0.0,
+    debug=False,
+    mincov=0.0,
+    skip=True,
+    maxiter=1000,
+):
 
     outdir = wrkdir_DNR + "vdf_gmm/"
     if (
@@ -66,20 +75,30 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, ski
     vmean = np.nanmean(vc_coord_arr, axis=0)
     vmeanmag = np.linalg.norm(vmean)
 
+    onemodel = Normal().fit(vc_coord_arr, sample_weight=vc_val_arr)
+    onecovs = onemodel.covs
+
     det_means = [[-750e3, 0, 0], [-187.5e3, 0, 0], [650e3, -375e3, 0], [0, 0, 0]]
 
     distribs = []
     for idx in range(nMaxwellians):
         # vrand = np.random.uniform(low=-1, high=1, size=3) * 0.1 * vmeanmag
         # distribs.append(Normal(means=vmean + vrand, min_cov=mincov))
-        distribs.append(Normal(means=det_means[idx], min_cov=mincov))
+        distribs.append(
+            Normal(
+                means=det_means[idx],
+                min_cov=mincov,
+                covs=onecovs,
+                covariance_type="full",
+            )
+        )
 
     if nMaxwellians == 1:
         model = distribs[0].fit(vc_coord_arr, sample_weight=vc_val_arr)
     else:
-        model = GeneralMixtureModel(distribs, verbose=True, inertia=inertia).fit(
-            vc_coord_arr, sample_weight=vc_val_arr
-        )
+        model = GeneralMixtureModel(
+            distribs, verbose=True, inertia=inertia, max_iter=maxiter
+        ).fit(vc_coord_arr, sample_weight=vc_val_arr)
 
     if nMaxwellians > 1:
         predicted_cluster = model.predict(vc_coord_arr)
@@ -144,7 +163,7 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, ski
         )
 
 
-def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True):
+def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True, maxiter=1000):
 
     dirlist = os.listdir(wrkdir_DNR + "vdf_txts")
     cellids = np.array([d[1:] for d in dirlist]).astype(int)
@@ -152,4 +171,12 @@ def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True):
         fnrlist = os.listdir(wrkdir_DNR + "vdf_txts/c{}".format(ci))
         fnrs = np.array([f.split(".")[0][1:] for f in fnrlist])
         for fnr in fnrs:
-            fit_gmm(ci, fnr, nMaxwellians, inertia=inertia, mincov=mincov, skip=skip)
+            fit_gmm(
+                ci,
+                fnr,
+                nMaxwellians,
+                inertia=inertia,
+                mincov=mincov,
+                skip=skip,
+                maxiter=1000,
+            )
