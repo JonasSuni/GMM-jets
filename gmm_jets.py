@@ -129,15 +129,6 @@ def fit_gmm(
     loglikelihood = np.sum(np.log(likelihoods))
 
     print("Log-likelihood is {}".format(loglikelihood))
-    print(
-        "Log-likelihood is also {}".format(
-            model.summarize(
-                vc_coord_arr,
-                sample_weight=vc_val_arr,
-                priors=model.predict_proba(vc_coord_arr),
-            )
-        )
-    )
 
     for idx in range(len(out_arr)):
         out_arr[idx] = out_arr[idx] + [loglikelihood]
