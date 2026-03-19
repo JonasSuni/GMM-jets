@@ -36,6 +36,17 @@ def read_file(cellid, fnr):
     return (vc_coord_arr, vc_val_arr)
 
 
+def evaluate_maxwellian(X, mean, cov):
+
+    invcov = np.linalg.inv(cov)
+    res = (
+        (2 * np.pi) ** (-3.0 / 2)
+        * np.linalg.det(cov) ** (-1.0 / 2)
+        * np.exp(-0.5 * np.vecdot((X - mean), np.matmul(invcov, (X - mean).T).T))
+    )
+    return res
+
+
 def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, skip=True):
 
     outdir = wrkdir_DNR + "vdf_gmm/"
@@ -75,6 +86,8 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, ski
 
     out_arr = []
 
+    likelihoods = np.zeros_like(vc_val_arr)
+
     for idx in range(nMaxwellians):
         if nMaxwellians > 1:
             weight = model.priors.numpy()[idx]
@@ -89,12 +102,16 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, ski
                 weight, means / 1e3, covs * m_p / kb / 1e6
             )
         )
+        likelihoods = likelihoods + weight * evaluate_maxwellian(
+            vc_coord_arr, means, covs
+        )
         out_arr.append([weight] + means.tolist() + covs.flatten().tolist())
 
-    out_arr = np.array(out_arr)
+    loglikelihood = np.sum(np.log(likelihoods))
 
-    loglikelihood = model.summarize(vc_coord_arr, sample_weight=vc_val_arr)
-    print("Log likelihood is {}".format(loglikelihood))
+    print("Log-likelihood is {}".format(loglikelihood))
+
+    out_arr = np.array(out_arr)
 
     if debug:
         if nMaxwellians > 1:
