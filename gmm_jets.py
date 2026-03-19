@@ -94,7 +94,15 @@ def fit_gmm(cellid, fnr, nMaxwellians, inertia=0.0, debug=False, mincov=0.0, ski
     out_arr = np.array(out_arr)
 
     if debug:
-        return model
+        if nMaxwellians > 1:
+            return (
+                model,
+                model.predict(vc_coord_arr),
+                model.predict_proba(vc_coord_arr),
+                model.predict_log_proba(vc_coord_arr),
+            )
+        else:
+            return model
 
     if not os.path.exists(outdir + "n{}".format(nMaxwellians)):
         try:
