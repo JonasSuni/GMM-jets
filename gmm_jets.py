@@ -162,6 +162,34 @@ def fit_gmm(
         )
 
 
+def plot_loglikelihoods():
+
+    outdir = outdir = wrkdir_DNR + "vdf_gmm/"
+
+    loglikes = [[], [], [], []]
+
+    for nMaxwellians in [1, 2, 3, 4]:
+
+        dirlist = os.listdir(outdir + "n{}".format(nMaxwellians))
+        for dir in dirlist:
+            fnrfiles = os.listdir(outdir + "n{}/{}".format(nMaxwellians, dir))
+            for fnr in fnrfiles:
+                data = np.loadtxt(
+                    outdir + "n{}/{}/{}".format(nMaxwellians, dir, fnr), ndmin=2
+                )
+                loglike = data[0][-1]
+                loglikes[nMaxwellians - 1].append(loglike)
+
+    loglikes = np.array(loglikes).T
+    narr = np.array([1, 2, 3, 4])
+
+    fig, ax = plt.subplots(1, 1, figsize=(8, 8), layout="compressed")
+
+    ax.boxplot(loglikes)
+
+    fig.savefig(wrkdir_DNR + "Figs/loglikelihoods.png", dpi=300, bbox_inches="tight")
+
+
 def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True, maxiter=1000):
 
     dirlist = os.listdir(wrkdir_DNR + "vdf_txts")
