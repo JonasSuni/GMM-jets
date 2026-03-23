@@ -198,9 +198,11 @@ def plot_loglikelihoods():
         (int(loglikes[~np.isnan(loglikes)].size / 4), 4)
     )
     print(loglikes.shape)
-    narr = np.array([1, 2, 3, 4])
+    narr = np.array([[1, 2, 3, 4]] * int(loglikes.shape[0]), dtype=float)
 
     fig, ax = plt.subplots(1, 1, figsize=(8, 8), layout="compressed")
+
+    ax.scatter(narr, loglikes, alpha=0.3)
 
     ax.boxplot(loglikes)
 
