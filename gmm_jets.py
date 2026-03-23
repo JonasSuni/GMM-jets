@@ -181,6 +181,7 @@ def plot_loglikelihoods():
                 )
                 loglike = data[0][-1]
                 loglikes[nMaxwellians - 1, counter] = loglike
+                counter += 1
 
     loglikes = loglikes[~np.isnan(loglikes)].T
 
