@@ -202,9 +202,8 @@ def plot_loglikelihoods():
 
     fig, ax = plt.subplots(1, 1, figsize=(8, 8), layout="compressed")
 
-    ax.scatter(narr, loglikes, alpha=0.3)
-
     ax.boxplot(loglikes)
+    ax.scatter(narr, loglikes, alpha=0.3, edgecolors="none")
 
     fig.savefig(wrkdir_DNR + "Figs/loglikelihoods.png", dpi=300, bbox_inches="tight")
 
