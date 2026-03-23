@@ -166,10 +166,12 @@ def plot_loglikelihoods():
 
     outdir = outdir = wrkdir_DNR + "vdf_gmm/"
 
-    loglikes = [[], [], [], []]
+    loglikes = np.empty((4, 100000), dtype=float)
+    loglikes.fill(np.nan)
 
     for nMaxwellians in [1, 2, 3, 4]:
 
+        counter = 0
         dirlist = os.listdir(outdir + "n{}".format(nMaxwellians))
         for dir in dirlist:
             fnrfiles = os.listdir(outdir + "n{}/{}".format(nMaxwellians, dir))
@@ -178,9 +180,11 @@ def plot_loglikelihoods():
                     outdir + "n{}/{}/{}".format(nMaxwellians, dir, fnr), ndmin=2
                 )
                 loglike = data[0][-1]
-                loglikes[nMaxwellians - 1].append(loglike)
+                loglikes[nMaxwellians - 1, counter] = loglike
 
-    loglikes = np.array(loglikes).T
+    loglikes = loglikes[~np.isnan(loglikes)].T
+
+    loglikes = loglikes.T
     narr = np.array([1, 2, 3, 4])
 
     fig, ax = plt.subplots(1, 1, figsize=(8, 8), layout="compressed")
