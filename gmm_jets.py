@@ -168,6 +168,7 @@ def plot_loglikelihoods():
 
     loglikes = np.empty((4, 100000), dtype=float)
     loglikes.fill(np.nan)
+    print(loglikes.shape)
 
     for nMaxwellians in [1, 2, 3, 4]:
 
