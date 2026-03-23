@@ -175,7 +175,8 @@ def plot_loglikelihoods():
         dirlist = os.listdir(outdir + "n{}".format(nMaxwellians))
         for dir in dirlist:
             fnrfiles = os.listdir(outdir + "n{}/{}".format(nMaxwellians, dir))
-            fnr = fnrfiles[30]
+            fitfiles = [fnr for fnr in fnrfiles if "fit" in fnr]
+            fnr = fitfiles[30]
             data = np.loadtxt(
                 outdir + "n{}/{}/{}".format(nMaxwellians, dir, fnr), ndmin=2
             )
