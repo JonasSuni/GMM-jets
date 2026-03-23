@@ -179,7 +179,7 @@ def plot_loglikelihoods():
             fitfiles = [fnr for fnr in fnrfiles if "fit" in fnr]
             fnr = fitfiles[30]
             data = np.loadtxt(outdir + "n{}/{}/{}".format(nMaxwellians, dir, fnr))
-            print(data.shape)
+            # print(data.shape)
             if nMaxwellians > 1:
                 loglike = data[0][-1]
             else:
@@ -194,8 +194,7 @@ def plot_loglikelihoods():
             #     loglikes[nMaxwellians - 1, counter] = loglike
             #     counter += 1
 
-    # loglikes = loglikes[~np.isnan(loglikes)].T
-    loglikes = loglikes.T
+    loglikes = loglikes[loglikes != np.nan].T
     print(loglikes.shape)
     narr = np.array([1, 2, 3, 4])
 
