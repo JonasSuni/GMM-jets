@@ -175,13 +175,20 @@ def plot_loglikelihoods():
         dirlist = os.listdir(outdir + "n{}".format(nMaxwellians))
         for dir in dirlist:
             fnrfiles = os.listdir(outdir + "n{}/{}".format(nMaxwellians, dir))
-            for fnr in fnrfiles:
-                data = np.loadtxt(
-                    outdir + "n{}/{}/{}".format(nMaxwellians, dir, fnr), ndmin=2
-                )
-                loglike = data[0][-1]
-                loglikes[nMaxwellians - 1, counter] = loglike
-                counter += 1
+            fnr = fnrfiles[30]
+            data = np.loadtxt(
+                outdir + "n{}/{}/{}".format(nMaxwellians, dir, fnr), ndmin=2
+            )
+            loglike = data[0][-1]
+            loglikes[nMaxwellians - 1, counter] = loglike
+            counter += 1
+            # for fnr in fnrfiles:
+            #     data = np.loadtxt(
+            #         outdir + "n{}/{}/{}".format(nMaxwellians, dir, fnr), ndmin=2
+            #     )
+            #     loglike = data[0][-1]
+            #     loglikes[nMaxwellians - 1, counter] = loglike
+            #     counter += 1
 
     loglikes = loglikes[~np.isnan(loglikes)].T
 
