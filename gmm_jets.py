@@ -193,7 +193,8 @@ def plot_loglikelihoods():
             #     loglikes[nMaxwellians - 1, counter] = loglike
             #     counter += 1
 
-    loglikes = loglikes[~np.isnan(loglikes)].T
+    # loglikes = loglikes[~np.isnan(loglikes)].T
+    loglikes = loglikes.T
     print(loglikes.shape)
     narr = np.array([1, 2, 3, 4])
 
