@@ -189,6 +189,8 @@ def plot_loglikelihoods():
 
     fig.savefig(wrkdir_DNR + "Figs/loglikelihoods.png", dpi=300, bbox_inches="tight")
 
+    plt.close(fig)
+
 
 def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True, maxiter=1000):
 
