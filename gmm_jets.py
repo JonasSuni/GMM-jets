@@ -194,8 +194,8 @@ def plot_loglikelihoods():
             #     loglikes[nMaxwellians - 1, counter] = loglike
             #     counter += 1
 
-    loglikes = loglikes[np.isnan(loglikes)].reshape(
-        (int(loglikes[np.isnan(loglikes)].size / 4), 4)
+    loglikes = loglikes[~np.isnan(loglikes)].reshape(
+        (int(loglikes[~np.isnan(loglikes)].size / 4), 4)
     )
     print(loglikes.shape)
     narr = np.array([1, 2, 3, 4])
