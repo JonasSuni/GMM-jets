@@ -192,8 +192,6 @@ def plot_loglikelihoods():
             #     counter += 1
 
     loglikes = loglikes[~np.isnan(loglikes)].T
-
-    loglikes = loglikes.T
     narr = np.array([1, 2, 3, 4])
 
     fig, ax = plt.subplots(1, 1, figsize=(8, 8), layout="compressed")
