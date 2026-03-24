@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import torch
 from pomegranate.gmm import GeneralMixtureModel
 from pomegranate.distributions import *
+from copy import deepcopy
 
 
 r_e = 6.371e6
@@ -72,9 +73,6 @@ def fit_gmm(
     except:
         return None
 
-    vmean = np.nanmean(vc_coord_arr, axis=0)
-    vmeanmag = np.linalg.norm(vmean)
-
     onemodel = Normal().fit(vc_coord_arr, sample_weight=vc_val_arr)
     onecovs = onemodel.covs
 
@@ -84,9 +82,9 @@ def fit_gmm(
     for idx in range(nMaxwellians):
         distribs.append(
             Normal(
-                means=det_means[idx],
+                means=deepcopy(det_means[idx]),
                 min_cov=mincov,
-                covs=onecovs,
+                covs=deepcopy(onecovs),
                 covariance_type="full",
             )
         )
