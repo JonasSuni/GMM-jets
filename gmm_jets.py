@@ -75,8 +75,25 @@ def fit_gmm(
 
     onemodel = Normal().fit(vc_coord_arr, sample_weight=vc_val_arr)
     onecovs = onemodel.covs
+    onemeans = onemodel.means
+    cov_sphere = np.trace(onecovs.numpy()) / 3.0
 
     det_means = [[-750e3, 0, 0], [-187.5e3, 0, 0], [650e3, -375e3, 0], [0.0, 0.0, 0.0]]
+
+    det_means = []
+    triplets = [
+        [0, 0, 0],
+        [-1, 0, 0],
+        [1, 0, 0],
+        [0, -1, 0],
+        [0, 1, 0],
+        [0, 0, -1],
+        [0, 0, 1],
+    ]
+    for idx in range(len(triplets)):
+        det_means.append(
+            onemeans.numpy() + np.sqrt(cov_sphere) * np.array(triplets[idx])
+        )
 
     distribs = []
     for idx in range(nMaxwellians):
