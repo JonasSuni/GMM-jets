@@ -101,7 +101,7 @@ def fit_gmm(
             Normal(
                 means=deepcopy(det_means[idx]),
                 min_cov=mincov,
-                covs=deepcopy(onecovs),
+                covs=deepcopy(onecovs.numpy()),
                 covariance_type="full",
             )
         )
