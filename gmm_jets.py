@@ -99,9 +99,9 @@ def fit_gmm(
     for idx in range(nMaxwellians):
         distribs.append(
             Normal(
-                means=deepcopy(det_means[idx]),
+                means=deepcopy(det_means[idx].astype(float)),
                 min_cov=mincov,
-                covs=deepcopy(onecovs.numpy()),
+                covs=deepcopy(onecovs.numpy().astype(float)),
                 covariance_type="full",
             )
         )
