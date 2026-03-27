@@ -177,6 +177,101 @@ def fit_gmm(
         )
 
 
+def create_dir_if_not_exist(outdir):
+
+    if not os.path.exists(outdir):
+        try:
+            os.makedirs(outdir)
+            print("Created directory {}".format(outdir))
+        except OSError:
+            print("Directory {} already exists".format(outdir))
+            pass
+
+
+def plot_jet_loglikes(prepost_time=30):
+
+    outdir = wrkdir_DNR + "Figs/loglikes/"
+    create_dir_if_not_exist(outdir)
+    create_dir_if_not_exist(outdir + "archer")
+    create_dir_if_not_exist(outdir + "koller")
+    create_dir_if_not_exist(outdir + "archerkoller")
+
+    archer_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/archer_intervals.txt", dtype=int
+    )
+    koller_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/koller_intervals.txt", dtype=int
+    )
+    archerkoller_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/archerkoller_intervals.txt", dtype=int
+    )
+
+    for p in archer_data:
+        ci, t0, t1, tjet = p
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
+        plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
+        fig.savefig(
+            outdir + "archer/c{}_t{}_{}.png".format(ci, t0, t1),
+            dpi=300,
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+
+    for p in koller_data:
+        ci, t0, t1, tjet = p
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
+        plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
+        fig.savefig(
+            outdir + "archer/c{}_t{}_{}.png".format(ci, t0, t1),
+            dpi=300,
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+
+    for p in archerkoller_data:
+        ci, t0, t1, tjet = p
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
+        plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
+        fig.savefig(
+            outdir + "archer/c{}_t{}_{}.png".format(ci, t0, t1),
+            dpi=300,
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+
+
+def plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time=30):
+
+    fnr_arr = np.arange(t0 - prepost_time, t1 + prepost_time + 0.1, 1, dtype=int)
+    loglikes_arr = np.zeros((nMaxwellians, fnr_arr.size), dtype=float)
+    for idx in range(nMaxwellians):
+        for idx2, fnr in enumerate(fnr_arr):
+            data = np.loadtxt(
+                wrkdir_DNR + "vdf_gmm/n{}/c{}/f{}.fit".format(idx + 1, ci, int(fnr)),
+                ndmin=2,
+            )
+            loglikes_arr[idx, idx2] = data[0][-1]
+
+    for idx in range(nMaxwellians):
+        ax.plot(fnr_arr, loglikes_arr[idx, :], label="n = {}".format(idx + 1))
+
+    ax.set_xlim(fnr_arr[0], fnr_arr[-1])
+    ax.grid()
+    ax.legend()
+    ax.set(xlabel="t [s]", ylabel="Log-likelihood")
+    ax.axvline(tjet, linestyle="dashed", color="black")
+    ax.fill_between(
+        fnr_arr,
+        0,
+        1,
+        where=np.logical_and(fnr_arr >= t0, fnr_arr <= t1),
+        color="green",
+        alpha=0.2,
+        transform=ax.get_xaxis_transform(),
+        linewidth=0,
+    )
+
+
 def plot_loglikelihoods():
 
     outdir = outdir = wrkdir_DNR + "vdf_gmm/"
