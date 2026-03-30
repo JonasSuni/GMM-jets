@@ -246,11 +246,15 @@ def plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time=30):
     loglikes_arr = np.zeros((nMaxwellians, fnr_arr.size), dtype=float)
     for idx in range(nMaxwellians):
         for idx2, fnr in enumerate(fnr_arr):
-            data = np.loadtxt(
-                wrkdir_DNR + "vdf_gmm/n{}/c{}/f{}.fit".format(idx + 1, ci, int(fnr)),
-                ndmin=2,
-            )
-            loglikes_arr[idx, idx2] = data[0][-1]
+            try:
+                data = np.loadtxt(
+                    wrkdir_DNR
+                    + "vdf_gmm/n{}/c{}/f{}.fit".format(idx + 1, ci, int(fnr)),
+                    ndmin=2,
+                )
+                loglikes_arr[idx, idx2] = data[0][-1]
+            except:
+                loglikes_arr[idx, idx2] = np.nan
 
     for idx in range(nMaxwellians):
         ax.plot(fnr_arr, loglikes_arr[idx, :], label="n = {}".format(idx + 1))
