@@ -222,7 +222,7 @@ def plot_jet_loglikes(prepost_time=30):
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
-            outdir + "archer/c{}_t{}_{}.png".format(ci, t0, t1),
+            outdir + "koller/c{}_t{}_{}.png".format(ci, t0, t1),
             dpi=300,
             bbox_inches="tight",
         )
@@ -233,7 +233,7 @@ def plot_jet_loglikes(prepost_time=30):
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
-            outdir + "archer/c{}_t{}_{}.png".format(ci, t0, t1),
+            outdir + "archerkoller/c{}_t{}_{}.png".format(ci, t0, t1),
             dpi=300,
             bbox_inches="tight",
         )
