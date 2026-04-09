@@ -57,6 +57,9 @@ def fit_gmm(
     mincov=0.0,
     skip=True,
     maxiter=1000,
+    old_means=None,
+    old_covs=None,
+    old_priors=None,
 ):
 
     outdir = wrkdir_DNR + "vdf_gmm/"
@@ -73,44 +76,66 @@ def fit_gmm(
     except:
         return None
 
-    onemodel = Normal().fit(vc_coord_arr, sample_weight=vc_val_arr)
-    onecovs = onemodel.covs
-    onemeans = onemodel.means
-    cov_sphere = np.trace(onecovs.numpy()) / 3.0
-
-    det_means = [[-750e3, 0, 0], [-187.5e3, 0, 0], [650e3, -375e3, 0], [0.0, 0.0, 0.0]]
-
-    det_means = []
-    triplets = [
-        [0, 0, 0],
-        [-1, 0, 0],
-        [1, 0, 0],
-        [0, -1, 0],
-        [0, 1, 0],
-        [0, 0, -1],
-        [0, 0, 1],
-    ]
-    for idx in range(len(triplets)):
-        det_means.append(
-            onemeans.numpy() + np.sqrt(cov_sphere) * np.array(triplets[idx])
-        )
-
     distribs = []
-    for idx in range(nMaxwellians):
-        distribs.append(
-            Normal(
-                means=deepcopy(det_means[idx].astype(float)),
-                min_cov=mincov,
-                covs=deepcopy(onecovs.numpy().astype(float)),
-                covariance_type="full",
+    if old_means or old_covs or old_priors:
+        if not (old_means and old_covs and old_priors):
+            raise ValueError(
+                "Error: Old priors, means, and covariances must all be defined! Exiting."
             )
-        )
+        if (
+            len(old_means) != nMaxwellians
+            or len(old_covs) != nMaxwellians
+            or len(old_priors) != nMaxwellians
+        ):
+            raise ValueError(
+                "Error: Old priors, means, and covariances must have lengths equal to number of Maxwellians! Exiting."
+            )
+
+        for idx in range(nMaxwellians):
+            distribs.append(
+                Normal(
+                    means=deepcopy(old_means[idx]),
+                    covs=deepcopy(old_covs[idx]),
+                    covariance_type="full",
+                )
+            )
+
+    else:
+        onemodel = Normal().fit(vc_coord_arr, sample_weight=vc_val_arr)
+        onecovs = onemodel.covs
+        onemeans = onemodel.means
+        cov_sphere = np.trace(onecovs.numpy()) / 3.0
+
+        det_means = []
+        triplets = [
+            [0, 0, 0],
+            [-1, 0, 0],
+            [1, 0, 0],
+            [0, -1, 0],
+            [0, 1, 0],
+            [0, 0, -1],
+            [0, 0, 1],
+        ]
+        for idx in range(len(triplets)):
+            det_means.append(
+                onemeans.numpy() + np.sqrt(cov_sphere) * np.array(triplets[idx])
+            )
+
+        for idx in range(nMaxwellians):
+            distribs.append(
+                Normal(
+                    means=deepcopy(det_means[idx].astype(float)),
+                    min_cov=mincov,
+                    covs=deepcopy(onecovs.numpy().astype(float)),
+                    covariance_type="full",
+                )
+            )
 
     if nMaxwellians == 1:
         model = distribs[0].fit(vc_coord_arr, sample_weight=vc_val_arr)
     else:
         model = GeneralMixtureModel(
-            distribs, verbose=True, inertia=inertia, max_iter=maxiter
+            distribs, verbose=True, inertia=inertia, max_iter=maxiter, priors=old_priors
         ).fit(vc_coord_arr, sample_weight=vc_val_arr)
 
     if nMaxwellians > 1:
@@ -120,15 +145,25 @@ def fit_gmm(
 
     likelihoods = np.zeros_like(vc_val_arr)
 
+    means_list = []
+    covs_list = []
+    weights_list = []
+
     for idx in range(nMaxwellians):
         if nMaxwellians > 1:
             weight = model.priors.numpy()[idx]
             means = model.distributions[idx].means.numpy()
             covs = model.distributions[idx].covs.numpy()
+            means_list.append(model.distributions[idx].means)
+            covs_list.append(model.distributions[idx].covs)
+            weights_list.append(model.priors[idx])
         else:
             weight = 1
             means = model.means.numpy()
             covs = model.covs.numpy()
+            means_list.append(model.means)
+            covs_list.append(model.covs)
+            weights_list.append(1)
         print(
             "Weight: {}\nMean: {}\nCovariance:\n{}\n".format(
                 weight, means / 1e3, covs * m_p / kb / 1e6
@@ -175,6 +210,8 @@ def fit_gmm(
             outdir + "n{}/c{}/f{}.pred".format(nMaxwellians, cellid, fnr),
             predicted_cluster,
         )
+
+    return (means_list, covs_list, weights_list)
 
 
 def create_dir_if_not_exist(outdir):
@@ -300,13 +337,6 @@ def plot_loglikelihoods():
                 loglike = data[-1]
             loglikes[nMaxwellians - 1, counter] = loglike
             counter += 1
-            # for fnr in fnrfiles:
-            #     data = np.loadtxt(
-            #         outdir + "n{}/{}/{}".format(nMaxwellians, dir, fnr), ndmin=2
-            #     )
-            #     loglike = data[0][-1]
-            #     loglikes[nMaxwellians - 1, counter] = loglike
-            #     counter += 1
 
     loglikes = loglikes[~np.isnan(loglikes)].reshape(
         (int(loglikes[~np.isnan(loglikes)].size / 4), 4)
@@ -340,4 +370,55 @@ def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True, maxiter=
                 mincov=mincov,
                 skip=skip,
                 maxiter=maxiter,
+            )
+
+
+def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30):
+
+    archer_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/archer_intervals.txt", dtype=int
+    )
+    koller_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/koller_intervals.txt", dtype=int
+    )
+    archerkoller_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/archerkoller_intervals.txt", dtype=int
+    )
+
+    all_data = np.vstack((archer_data, koller_data, archerkoller_data))
+
+    for p in all_data:
+        ci, t0, t1, tjet = p
+        fnr_arr_pre = np.arange(t0 - prepost_time, tjet, 1, dtype=int)[::-1]
+        fnr_arr_post = np.arange(tjet + 1, t1 + prepost_time + 0.1, 1, dtype=int)
+        tjet_means, tjet_covs, tjet_priors = fit_gmm(
+            ci,
+            int(tjet),
+            nMaxwellians,
+            skip=skip,
+            old_covs=None,
+            old_means=None,
+            old_priors=None,
+        )
+        old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
+        for fnr in fnr_arr_pre:
+            old_means, old_covs, old_priors = fit_gmm(
+                ci,
+                fnr,
+                nMaxwellians,
+                skip=skip,
+                old_covs=old_covs,
+                old_means=old_means,
+                old_priors=old_priors,
+            )
+        old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
+        for fnr in fnr_arr_post:
+            old_means, old_covs, old_priors = fit_gmm(
+                ci,
+                fnr,
+                nMaxwellians,
+                skip=skip,
+                old_covs=old_covs,
+                old_means=old_means,
+                old_priors=old_priors,
             )
