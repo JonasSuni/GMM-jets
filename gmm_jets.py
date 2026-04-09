@@ -402,23 +402,33 @@ def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30):
         )
         old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
         for fnr in fnr_arr_pre:
-            old_means, old_covs, old_priors = fit_gmm(
-                ci,
-                fnr,
-                nMaxwellians,
-                skip=skip,
-                old_covs=old_covs,
-                old_means=old_means,
-                old_priors=old_priors,
-            )
+            try:
+                out = fit_gmm(
+                    ci,
+                    fnr,
+                    nMaxwellians,
+                    skip=skip,
+                    old_covs=old_covs,
+                    old_means=old_means,
+                    old_priors=old_priors,
+                )
+                old_means, old_covs, old_priors = out
+            except:
+                print("File not found, continuing.")
+                continue
         old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
         for fnr in fnr_arr_post:
-            old_means, old_covs, old_priors = fit_gmm(
-                ci,
-                fnr,
-                nMaxwellians,
-                skip=skip,
-                old_covs=old_covs,
-                old_means=old_means,
-                old_priors=old_priors,
-            )
+            try:
+                out = fit_gmm(
+                    ci,
+                    fnr,
+                    nMaxwellians,
+                    skip=skip,
+                    old_covs=old_covs,
+                    old_means=old_means,
+                    old_priors=old_priors,
+                )
+                old_means, old_covs, old_priors = out
+            except:
+                print("File not found, continuing.")
+                continue
