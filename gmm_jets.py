@@ -299,6 +299,7 @@ def plot_loglike_onejet(
                     pen = 0.5 * (idx + 1) * np.log(pred_len)
                 loglikes_arr[idx, idx2] = data[0][-1] - pen
             except:
+                print("Something went wrong when reading loglike")
                 loglikes_arr[idx, idx2] = np.nan
 
     for idx in range(nMaxwellians):
