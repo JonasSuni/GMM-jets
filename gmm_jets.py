@@ -294,8 +294,7 @@ def plot_loglike_onejet(
                 pen = 0.0
                 if penalty:
                     pred_len = np.loadtxt(
-                        wrkdir_DNR
-                        + "vdf_gmm/n4/c{}/f{}.pred".format(idx + 1, ci, int(fnr))
+                        wrkdir_DNR + "vdf_gmm/n4/c{}/f{}.pred".format(ci, int(fnr))
                     ).size
                     pen = 0.5 * (idx + 1) * np.log(pred_len)
                 loglikes_arr[idx, idx2] = data[0][-1] - pen
