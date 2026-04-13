@@ -277,7 +277,9 @@ def plot_jet_loglikes(prepost_time=30):
         plt.close(fig)
 
 
-def plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time=30):
+def plot_loglike_onejet(
+    ax, nMaxwellians, ci, t0, t1, tjet, prepost_time=30, penalty=True
+):
 
     fnr_arr = np.arange(t0 - prepost_time, t1 + prepost_time + 0.1, 1, dtype=int)
     loglikes_arr = np.zeros((nMaxwellians, fnr_arr.size), dtype=float)
@@ -289,7 +291,14 @@ def plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time=30):
                     + "vdf_gmm/n{}/c{}/f{}.fit".format(idx + 1, ci, int(fnr)),
                     ndmin=2,
                 )
-                loglikes_arr[idx, idx2] = data[0][-1]
+                pen = 0.0
+                if penalty:
+                    pred_len = np.loadtxt(
+                        wrkdir_DNR
+                        + "vdf_gmm/n4/c{}/f{}.pred".format(idx + 1, ci, int(fnr))
+                    ).size
+                    pen = 0.5 * (idx + 1) * np.log(pred_len)
+                loglikes_arr[idx, idx2] = data[0][-1] - pen
             except:
                 loglikes_arr[idx, idx2] = np.nan
 
