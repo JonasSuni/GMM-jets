@@ -303,7 +303,7 @@ def plot_loglike_onejet(
                         + 0.5
                         * 9
                         * (
-                            knz * (np.log(pred_len) - np.log(12))
+                            knz * np.log(pred_len/12)
                             + np.sum(np.log(data[:, 0]))
                         )
                     )
