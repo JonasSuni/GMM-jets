@@ -291,26 +291,29 @@ def plot_loglike_onejet(
                     + "vdf_gmm/n{}/c{}/f{}.fit".format(idx + 1, ci, int(fnr)),
                     ndmin=2,
                 )
-                pen = 0.0
-                if penalty:
-                    knz = idx + 1
-                    pred_len = np.loadtxt(
-                        wrkdir_DNR + "vdf_gmm/n4/c{}/f{}.pred".format(ci, int(fnr))
-                    ).size
-                    pen = (
-                        0.5 * knz * (9 + 1)
-                        + knz * 0.5 * np.log(pred_len / 12)
-                        + 0.5
-                        * 9
-                        * (
-                            knz * np.log(pred_len/12)
-                            + np.sum(np.log(data[:, 0]))
-                        )
-                    )
-                loglikes_arr[idx, idx2] = data[0][-1] - pen
             except:
                 print("Something went wrong when reading loglike")
                 loglikes_arr[idx, idx2] = np.nan
+                continue
+
+            pen = 0.0
+            if penalty:
+                knz = idx + 1
+                pred_len = np.loadtxt(
+                    wrkdir_DNR + "vdf_gmm/n4/c{}/f{}.pred".format(ci, int(fnr))
+                ).size
+                pen = (
+                    0.5 * knz * (9 + 1)
+                    + knz * 0.5 * np.log(pred_len / 12)
+                    + 0.5
+                    * 9
+                    * (
+                        knz * np.log(pred_len/12)
+                        + np.sum(np.log(data[:, 0]))
+                    )
+                )
+            loglikes_arr[idx, idx2] = data[0][-1] - pen
+                
 
     for idx in range(nMaxwellians):
         ax.plot(fnr_arr, loglikes_arr[idx, :], label="n = {}".format(idx + 1))
