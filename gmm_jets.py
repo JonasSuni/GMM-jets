@@ -225,7 +225,7 @@ def create_dir_if_not_exist(outdir):
             pass
 
 
-def plot_jet_loglikes(prepost_time=30, tjet_only=False):
+def plot_jet_loglikes(prepost_time=30, tjet_only=False, skip_mono=False):
 
     outdir = wrkdir_DNR + "Figs/loglikes/"
     create_dir_if_not_exist(outdir)
@@ -247,7 +247,9 @@ def plot_jet_loglikes(prepost_time=30, tjet_only=False):
         ci, t0, t1, tjet = p
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         if tjet_only:
-            plot_loglike_tjet(ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=True)
+            plot_loglike_tjet(
+                ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
+            )
         else:
             plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
@@ -261,7 +263,9 @@ def plot_jet_loglikes(prepost_time=30, tjet_only=False):
         ci, t0, t1, tjet = p
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         if tjet_only:
-            plot_loglike_tjet(ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=True)
+            plot_loglike_tjet(
+                ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
+            )
         else:
             plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
@@ -275,7 +279,9 @@ def plot_jet_loglikes(prepost_time=30, tjet_only=False):
         ci, t0, t1, tjet = p
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         if tjet_only:
-            plot_loglike_tjet(ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=True)
+            plot_loglike_tjet(
+                ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
+            )
         else:
             plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
