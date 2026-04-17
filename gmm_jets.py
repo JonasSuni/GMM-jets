@@ -225,7 +225,7 @@ def create_dir_if_not_exist(outdir):
             pass
 
 
-def plot_jet_loglikes(prepost_time=30):
+def plot_jet_loglikes(prepost_time=30, tjet_only=False):
 
     outdir = wrkdir_DNR + "Figs/loglikes/"
     create_dir_if_not_exist(outdir)
@@ -246,7 +246,10 @@ def plot_jet_loglikes(prepost_time=30):
     for p in archer_data:
         ci, t0, t1, tjet = p
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
-        plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
+        if tjet_only:
+            plot_loglike_tjet(ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=True)
+        else:
+            plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
             outdir + "archer/c{}_t{}_{}.png".format(ci, t0, t1),
             dpi=300,
@@ -257,7 +260,10 @@ def plot_jet_loglikes(prepost_time=30):
     for p in koller_data:
         ci, t0, t1, tjet = p
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
-        plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
+        if tjet_only:
+            plot_loglike_tjet(ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=True)
+        else:
+            plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
             outdir + "koller/c{}_t{}_{}.png".format(ci, t0, t1),
             dpi=300,
@@ -268,13 +274,56 @@ def plot_jet_loglikes(prepost_time=30):
     for p in archerkoller_data:
         ci, t0, t1, tjet = p
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
-        plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
+        if tjet_only:
+            plot_loglike_tjet(ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=True)
+        else:
+            plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
             outdir + "archerkoller/c{}_t{}_{}.png".format(ci, t0, t1),
             dpi=300,
             bbox_inches="tight",
         )
         plt.close(fig)
+
+
+def plot_loglike_tjet(
+    ax, nMaxwellians, ci, t0, t1, tjet, prepost_time=30, penalty=True, skip_mono=False
+):
+
+    maxwell_arr = np.arange(1, nMaxwellians + 1)
+    loglikes_arr = np.zeros(nMaxwellians, dtype=float)
+    for idx in range(nMaxwellians):
+        try:
+            data = np.loadtxt(
+                wrkdir_DNR + "vdf_gmm/n{}/c{}/f{}.fit".format(idx + 1, ci, int(tjet)),
+                ndmin=2,
+            )
+        except:
+            print("Something went wrong when reading loglike")
+            loglikes_arr[idx] = np.nan
+            continue
+
+        pen = 0.0
+        if penalty:
+            knz = idx + 1
+            pred_len = np.loadtxt(
+                wrkdir_DNR + "vdf_gmm/n4/c{}/f{}.pred".format(ci, int(tjet))
+            ).size
+            pen = (
+                0.5 * knz * (9 + 1)
+                + knz * 0.5 * np.log(pred_len / 12)
+                + 0.5 * 9 * (knz * np.log(pred_len / 12) + np.sum(np.log(data[:, 0])))
+            )
+        loglikes_arr[idx] = data[0][-1] - pen
+
+    ax.plot(maxwell_arr, loglikes_arr)
+
+    if skip_mono:
+        ax.set_xlim(2, nMaxwellians)
+    else:
+        ax.set_xlim(1, nMaxwellians)
+    ax.grid()
+    ax.set(xlabel="# Maxwellians", ylabel="Log-likelihood")
 
 
 def plot_loglike_onejet(
@@ -307,13 +356,9 @@ def plot_loglike_onejet(
                     + knz * 0.5 * np.log(pred_len / 12)
                     + 0.5
                     * 9
-                    * (
-                        knz * np.log(pred_len/12)
-                        + np.sum(np.log(data[:, 0]))
-                    )
+                    * (knz * np.log(pred_len / 12) + np.sum(np.log(data[:, 0])))
                 )
             loglikes_arr[idx, idx2] = data[0][-1] - pen
-                
 
     for idx in range(nMaxwellians):
         ax.plot(fnr_arr, loglikes_arr[idx, :], label="n = {}".format(idx + 1))
