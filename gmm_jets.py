@@ -293,10 +293,20 @@ def plot_loglike_onejet(
                 )
                 pen = 0.0
                 if penalty:
+                    knz = idx + 1
                     pred_len = np.loadtxt(
                         wrkdir_DNR + "vdf_gmm/n4/c{}/f{}.pred".format(ci, int(fnr))
                     ).size
-                    pen = 9 * 0.5 * (idx + 1) * np.log(pred_len)
+                    pen = (
+                        0.5 * knz * (9 + 1)
+                        + knz * 0.5 * np.log(pred_len / 12)
+                        + 0.5
+                        * 9
+                        * (
+                            knz * (np.log(pred_len) - np.log(12))
+                            + np.sum(np.log(data[:, 0]))
+                        )
+                    )
                 loglikes_arr[idx, idx2] = data[0][-1] - pen
             except:
                 print("Something went wrong when reading loglike")
