@@ -322,12 +322,12 @@ def plot_loglike_tjet(
             )
         loglikes_arr[idx] = data[0][-1] - pen
 
-    ax.plot(maxwell_arr, loglikes_arr)
+    ax.plot(maxwell_arr, loglikes_arr, "o-")
 
     if skip_mono:
-        ax.set_xlim(2, nMaxwellians)
+        ax.set_xlim(2 - 0.1, nMaxwellians + 0.1)
     else:
-        ax.set_xlim(1, nMaxwellians)
+        ax.set_xlim(1 - 0.1, nMaxwellians + 0.1)
     ax.grid()
     ax.set(xlabel="# Maxwellians", ylabel="Log-likelihood")
 
