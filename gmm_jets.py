@@ -214,7 +214,9 @@ def create_dir_if_not_exist(outdir):
             pass
 
 
-def plot_jet_loglikes(prepost_time=30, tjet_only=False, skip_mono=False):
+def plot_jet_loglikes(
+    nMaxwellians=4, prepost_time=30, tjet_only=False, skip_mono=False
+):
 
     outdir = wrkdir_DNR + "Figs/loglikes/"
     create_dir_if_not_exist(outdir)
@@ -237,10 +239,10 @@ def plot_jet_loglikes(prepost_time=30, tjet_only=False, skip_mono=False):
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         if tjet_only:
             plot_loglike_tjet(
-                ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
+                ax, nMaxwellians, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
             )
         else:
-            plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
+            plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
             outdir + "archer/c{}_t{}_{}.png".format(ci, t0, t1),
             dpi=300,
@@ -253,10 +255,10 @@ def plot_jet_loglikes(prepost_time=30, tjet_only=False, skip_mono=False):
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         if tjet_only:
             plot_loglike_tjet(
-                ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
+                ax, nMaxwellians, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
             )
         else:
-            plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
+            plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
             outdir + "koller/c{}_t{}_{}.png".format(ci, t0, t1),
             dpi=300,
@@ -269,10 +271,10 @@ def plot_jet_loglikes(prepost_time=30, tjet_only=False, skip_mono=False):
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         if tjet_only:
             plot_loglike_tjet(
-                ax, 4, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
+                ax, nMaxwellians, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
             )
         else:
-            plot_loglike_onejet(ax, 4, ci, t0, t1, tjet, prepost_time)
+            plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
             outdir + "archerkoller/c{}_t{}_{}.png".format(ci, t0, t1),
             dpi=300,
