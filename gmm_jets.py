@@ -238,9 +238,7 @@ def plot_jet_loglikes(
         ci, t0, t1, tjet = p
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         if tjet_only:
-            plot_loglike_tjet(
-                ax, nMaxwellians, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
-            )
+            plot_loglike_tjet(ax, nMaxwellians, ci, tjet, skip_mono=skip_mono)
         else:
             plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
@@ -254,9 +252,7 @@ def plot_jet_loglikes(
         ci, t0, t1, tjet = p
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         if tjet_only:
-            plot_loglike_tjet(
-                ax, nMaxwellians, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
-            )
+            plot_loglike_tjet(ax, nMaxwellians, ci, tjet, skip_mono=skip_mono)
         else:
             plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
@@ -270,9 +266,7 @@ def plot_jet_loglikes(
         ci, t0, t1, tjet = p
         fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
         if tjet_only:
-            plot_loglike_tjet(
-                ax, nMaxwellians, ci, t0, t1, tjet, prepost_time, skip_mono=skip_mono
-            )
+            plot_loglike_tjet(ax, nMaxwellians, ci, tjet, skip_mono=skip_mono)
         else:
             plot_loglike_onejet(ax, nMaxwellians, ci, t0, t1, tjet, prepost_time)
         fig.savefig(
