@@ -446,7 +446,7 @@ def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True, maxiter=
             )
 
 
-def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30):
+def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30,tjet_only=False):
 
     archer_data = np.loadtxt(
         wrkdir_DNR + "txts/jet_intervals/archer_intervals.txt", dtype=int
@@ -473,35 +473,36 @@ def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30):
             old_means=None,
             old_priors=None,
         )
-        old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
-        for fnr in fnr_arr_pre:
-            try:
-                out = fit_gmm(
-                    ci,
-                    fnr,
-                    nMaxwellians,
-                    skip=skip,
-                    old_covs=old_covs,
-                    old_means=old_means,
-                    old_priors=old_priors,
-                )
-                old_means, old_covs, old_priors = out
-            except:
-                print("File not found, continuing.")
-                continue
-        old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
-        for fnr in fnr_arr_post:
-            try:
-                out = fit_gmm(
-                    ci,
-                    fnr,
-                    nMaxwellians,
-                    skip=skip,
-                    old_covs=old_covs,
-                    old_means=old_means,
-                    old_priors=old_priors,
-                )
-                old_means, old_covs, old_priors = out
-            except:
-                print("File not found, continuing.")
-                continue
+        if not tjet_only:
+            old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
+            for fnr in fnr_arr_pre:
+                try:
+                    out = fit_gmm(
+                        ci,
+                        fnr,
+                        nMaxwellians,
+                        skip=skip,
+                        old_covs=old_covs,
+                        old_means=old_means,
+                        old_priors=old_priors,
+                    )
+                    old_means, old_covs, old_priors = out
+                except:
+                    print("File not found, continuing.")
+                    continue
+            old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
+            for fnr in fnr_arr_post:
+                try:
+                    out = fit_gmm(
+                        ci,
+                        fnr,
+                        nMaxwellians,
+                        skip=skip,
+                        old_covs=old_covs,
+                        old_means=old_means,
+                        old_priors=old_priors,
+                    )
+                    old_means, old_covs, old_priors = out
+                except:
+                    print("File not found, continuing.")
+                    continue
