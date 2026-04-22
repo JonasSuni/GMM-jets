@@ -107,10 +107,9 @@ def fit_gmm(
         cov_sphere = np.trace(onecovs.numpy()) / 3.0
         std_sphere = np.sqrt(cov_sphere)
 
-        thetas = np.linspace(0, 2 * np.pi, nMaxwellians - 1)[:-1]
+        thetas = np.linspace(0, 2 * np.pi, nMaxwellians + 1)[:-1]
 
         det_means = []
-        det_means.append(onemeans.numpy())
         for idx in range(thetas.size):
             det_means.append(
                 onemeans.numpy()
