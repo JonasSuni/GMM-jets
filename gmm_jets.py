@@ -105,20 +105,16 @@ def fit_gmm(
         onecovs = onemodel.covs
         onemeans = onemodel.means
         cov_sphere = np.trace(onecovs.numpy()) / 3.0
+        std_sphere = np.sqrt(cov_sphere)
+
+        thetas = np.linspace(0, 2 * np.pi, nMaxwellians - 1)[:-1]
 
         det_means = []
-        triplets = [
-            [0, 0, 0],
-            [-1, 0, 0],
-            [1, 0, 0],
-            [0, -1, 0],
-            [0, 1, 0],
-            [0, 0, -1],
-            [0, 0, 1],
-        ]
-        for idx in range(len(triplets)):
+        det_means.append(onemeans.numpy())
+        for idx in range(thetas.size):
             det_means.append(
-                onemeans.numpy() + np.sqrt(cov_sphere) * np.array(triplets[idx])
+                onemeans.numpy()
+                + std_sphere * np.array([np.cos(thetas[idx]), np.sin(thetas[idx]), 0.0])
             )
 
         for idx in range(nMaxwellians):
@@ -139,7 +135,9 @@ def fit_gmm(
         ).fit(vc_coord_arr, sample_weight=vc_val_arr)
 
     if nMaxwellians > 1:
-        predicted_cluster = model.predict(vc_coord_arr)
+        predicted_cluster = model.predict(vc_coord_arr).numpy()
+        predict_proba = model.predict(vc_coord_arr).numpy()
+        predicted_cluster = np.hstack((predicted_cluster, predict_proba))
 
     out_arr = []
 
@@ -179,7 +177,7 @@ def fit_gmm(
     print("Log-likelihood is {}".format(loglikelihood))
 
     for idx in range(len(out_arr)):
-        out_arr[idx] = out_arr[idx] + [loglikelihood]
+        out_arr[idx] = out_arr[idx] + [loglikelihood] + [vc_coord_arr[:, 0].size]
 
     out_arr = np.array(out_arr)
 
@@ -292,9 +290,7 @@ def plot_jet_loglikes(prepost_time=30, tjet_only=False, skip_mono=False):
         plt.close(fig)
 
 
-def plot_loglike_tjet(
-    ax, nMaxwellians, ci, t0, t1, tjet, prepost_time=30, penalty=True, skip_mono=False
-):
+def plot_loglike_tjet(ax, nMaxwellians, ci, tjet, penalty=True, skip_mono=False):
 
     maxwell_arr = np.arange(1, nMaxwellians + 1)
     loglikes_arr = np.zeros(nMaxwellians, dtype=float)
@@ -312,15 +308,13 @@ def plot_loglike_tjet(
         pen = 0.0
         if penalty:
             knz = idx + 1
-            pred_len = np.loadtxt(
-                wrkdir_DNR + "vdf_gmm/n4/c{}/f{}.pred".format(ci, int(tjet))
-            ).size
+            pred_len = data[0][-1]
             pen = (
                 0.5 * knz * (9 + 1)
                 + knz * 0.5 * np.log(pred_len / 12)
                 + 0.5 * 9 * (knz * np.log(pred_len / 12) + np.sum(np.log(data[:, 0])))
             )
-        loglikes_arr[idx] = data[0][-1] - pen
+        loglikes_arr[idx] = data[0][-2] - pen
 
     ax.plot(maxwell_arr, loglikes_arr, "o-")
 
@@ -354,9 +348,7 @@ def plot_loglike_onejet(
             pen = 0.0
             if penalty:
                 knz = idx + 1
-                pred_len = np.loadtxt(
-                    wrkdir_DNR + "vdf_gmm/n4/c{}/f{}.pred".format(ci, int(fnr))
-                ).size
+                pred_len = data[0][-1]
                 pen = (
                     0.5 * knz * (9 + 1)
                     + knz * 0.5 * np.log(pred_len / 12)
@@ -364,7 +356,7 @@ def plot_loglike_onejet(
                     * 9
                     * (knz * np.log(pred_len / 12) + np.sum(np.log(data[:, 0])))
                 )
-            loglikes_arr[idx, idx2] = data[0][-1] - pen
+            loglikes_arr[idx, idx2] = data[0][-2] - pen
 
     for idx in range(nMaxwellians):
         ax.plot(fnr_arr, loglikes_arr[idx, :], label="n = {}".format(idx + 1))
@@ -405,9 +397,9 @@ def plot_loglikelihoods():
             data = np.loadtxt(outdir + "n{}/{}/{}".format(nMaxwellians, dir, fnr))
             # print(data.shape)
             if nMaxwellians > 1:
-                loglike = data[0][-1]
+                loglike = data[0][-2]
             else:
-                loglike = data[-1]
+                loglike = data[-2]
             loglikes[nMaxwellians - 1, counter] = loglike
             counter += 1
 
@@ -446,7 +438,7 @@ def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True, maxiter=
             )
 
 
-def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30,tjet_only=False):
+def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30, tjet_only=False):
 
     archer_data = np.loadtxt(
         wrkdir_DNR + "txts/jet_intervals/archer_intervals.txt", dtype=int
