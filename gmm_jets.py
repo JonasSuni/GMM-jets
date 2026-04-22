@@ -189,17 +189,9 @@ def fit_gmm(
         else:
             return model
 
-    if not os.path.exists(outdir + "n{}".format(nMaxwellians)):
-        try:
-            os.makedirs(outdir + "n{}".format(nMaxwellians))
-        except OSError:
-            pass
+    create_dir_if_not_exist(outdir + "n{}".format(nMaxwellians))
 
-    if not os.path.exists(outdir + "n{}/c{}".format(nMaxwellians, cellid)):
-        try:
-            os.makedirs(outdir + "n{}/c{}".format(nMaxwellians, cellid))
-        except OSError:
-            pass
+    create_dir_if_not_exist(outdir + "n{}/c{}".format(nMaxwellians, cellid))
 
     np.savetxt(outdir + "n{}/c{}/f{}.fit".format(nMaxwellians, cellid, fnr), out_arr)
     if nMaxwellians > 1:
