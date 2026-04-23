@@ -135,8 +135,8 @@ def fit_gmm(
 
     if nMaxwellians > 1:
         predicted_cluster = model.predict(vc_coord_arr).numpy()
-        predict_proba = model.predict(vc_coord_arr).numpy()
-        predicted_cluster = np.hstack((predicted_cluster, predict_proba))
+        predict_proba = model.predict_proba(vc_coord_arr).numpy()
+        predicted_cluster = np.hstack((predicted_cluster, predict_proba, vc_val_arr))
 
     out_arr = []
 
