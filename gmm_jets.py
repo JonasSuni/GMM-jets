@@ -137,7 +137,11 @@ def fit_gmm(
         predicted_cluster = model.predict(vc_coord_arr).numpy()
         predict_proba = model.predict_proba(vc_coord_arr).numpy()
         predicted_cluster = np.hstack(
-            (np.array(predicted_cluster, ndmin=2).T, predict_proba, vc_val_arr)
+            (
+                np.array(predicted_cluster, ndmin=2).T,
+                predict_proba,
+                np.array(vc_val_arr, ndmin=2).T,
+            )
         )
 
     out_arr = []
