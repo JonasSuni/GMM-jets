@@ -180,7 +180,7 @@ def fit_gmm(
     # loglikelihood = np.sum(np.log(likelihoods))
 
     if nMaxwellians == 1:
-        loglikelihood = np.sum(model.log_probability(vc_coord_arr))
+        loglikelihood = np.sum(model.log_probability(vc_coord_arr).numpy())
     else:
         loglikelihood = model.summarize(vc_coord_arr, sample_weight=vc_val_arr)
 
