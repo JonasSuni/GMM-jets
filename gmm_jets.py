@@ -146,7 +146,7 @@ def fit_gmm(
 
     out_arr = []
 
-    likelihoods = np.zeros_like(vc_val_arr)
+    # likelihoods = np.zeros_like(vc_val_arr)
 
     means_list = []
     covs_list = []
@@ -172,12 +172,17 @@ def fit_gmm(
                 weight, means / 1e3, covs * m_p / kb / 1e6
             )
         )
-        likelihoods = likelihoods + weight * evaluate_maxwellian(
-            vc_coord_arr, means, covs
-        )
+        # likelihoods = likelihoods + weight * evaluate_maxwellian(
+        #     vc_coord_arr, means, covs
+        # )
         out_arr.append([weight] + means.tolist() + covs.flatten().tolist())
 
-    loglikelihood = np.sum(np.log(likelihoods))
+    # loglikelihood = np.sum(np.log(likelihoods))
+
+    if nMaxwellians == 1:
+        loglikelihood = np.sum(model.log_probability(vc_coord_arr))
+    else:
+        loglikelihood = model.summarize(vc_coord_arr, sample_weight=vc_val_arr)
 
     print("Log-likelihood is {}".format(loglikelihood))
 
