@@ -6,7 +6,6 @@ from pomegranate.gmm import GeneralMixtureModel
 from pomegranate.distributions import *
 from copy import deepcopy
 
-
 r_e = 6.371e6
 m_p = 1.672621898e-27
 q_p = 1.602176634e-19
@@ -26,7 +25,7 @@ bulkpath_FIF = "/turso/group/spacephysics/vlasiator/data/L0/3D/FIF/bulk1/"
 
 def read_file(cellid, fnr):
 
-    txtdir = wrkdir_DNR + "vdf_txts/"
+    txtdir = wrkdir_DNR + "vdf_txts_new/"
 
     vdfdata = np.loadtxt(txtdir + "c{}/f{}.txt".format(int(cellid), int(fnr)))
     if not vdfdata.size:
@@ -62,7 +61,8 @@ def fit_gmm(
     old_priors=None,
 ):
 
-    outdir = wrkdir_DNR + "vdf_gmm/"
+    outdir = wrkdir_DNR + "vdf_gmm_new/"
+    create_dir_if_not_exist(outdir)
     if (
         os.path.isfile(outdir + "n{}/c{}/f{}.fit".format(nMaxwellians, cellid, fnr))
         and skip
@@ -229,7 +229,7 @@ def plot_jet_loglikes(
     nMaxwellians=4, prepost_time=30, tjet_only=False, skip_mono=False
 ):
 
-    outdir = wrkdir_DNR + "Figs/loglikes/"
+    outdir = wrkdir_DNR + "Figs/loglikes_new/"
     create_dir_if_not_exist(outdir)
     create_dir_if_not_exist(outdir + "archer")
     create_dir_if_not_exist(outdir + "koller")
@@ -295,7 +295,8 @@ def plot_loglike_tjet(ax, nMaxwellians, ci, tjet, penalty=True, skip_mono=False)
     for idx in range(nMaxwellians):
         try:
             data = np.loadtxt(
-                wrkdir_DNR + "vdf_gmm/n{}/c{}/f{}.fit".format(idx + 1, ci, int(tjet)),
+                wrkdir_DNR
+                + "vdf_gmm_new/n{}/c{}/f{}.fit".format(idx + 1, ci, int(tjet)),
                 ndmin=2,
             )
         except:
@@ -335,7 +336,7 @@ def plot_loglike_onejet(
             try:
                 data = np.loadtxt(
                     wrkdir_DNR
-                    + "vdf_gmm/n{}/c{}/f{}.fit".format(idx + 1, ci, int(fnr)),
+                    + "vdf_gmm_new/n{}/c{}/f{}.fit".format(idx + 1, ci, int(fnr)),
                     ndmin=2,
                 )
             except:
@@ -378,7 +379,7 @@ def plot_loglike_onejet(
 
 def plot_loglikelihoods():
 
-    outdir = outdir = wrkdir_DNR + "vdf_gmm/"
+    outdir = outdir = wrkdir_DNR + "vdf_gmm_new/"
 
     loglikes = np.empty((4, 100000), dtype=float)
     loglikes.fill(np.nan)
@@ -439,13 +440,13 @@ def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True, maxiter=
 def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30, tjet_only=False):
 
     archer_data = np.loadtxt(
-        wrkdir_DNR + "txts/jet_intervals/archer_intervals.txt", dtype=int
+        wrkdir_DNR + "txts/jet_intervals/archer_intervals_new.txt", dtype=int
     )
     koller_data = np.loadtxt(
-        wrkdir_DNR + "txts/jet_intervals/koller_intervals.txt", dtype=int
+        wrkdir_DNR + "txts/jet_intervals/koller_intervals_new.txt", dtype=int
     )
     archerkoller_data = np.loadtxt(
-        wrkdir_DNR + "txts/jet_intervals/archerkoller_intervals.txt", dtype=int
+        wrkdir_DNR + "txts/jet_intervals/archerkoller_intervals_new.txt", dtype=int
     )
 
     all_data = np.vstack((archer_data, koller_data, archerkoller_data))
