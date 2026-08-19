@@ -27,6 +27,9 @@ def read_file(cellid, fnr):
 
     txtdir = wrkdir_DNR + "vdf_txts_new/"
 
+    if os.path.isfile(txtdir + "c{}/f{}.txt".format(int(cellid), int(fnr))):
+        if os.path.getsize(txtdir + "c{}/f{}.txt".format(int(cellid), int(fnr))) == 0:
+            raise Exception
     vdfdata = np.loadtxt(txtdir + "c{}/f{}.txt".format(int(cellid), int(fnr)))
     if not vdfdata.size:
         raise Exception
@@ -455,15 +458,19 @@ def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30, tjet_only=Fa
         ci, t0, t1, tjet = p
         fnr_arr_pre = np.arange(t0 - prepost_time, tjet, 1, dtype=int)[::-1]
         fnr_arr_post = np.arange(tjet + 1, t1 + prepost_time + 0.1, 1, dtype=int)
-        tjet_means, tjet_covs, tjet_priors = fit_gmm(
-            ci,
-            int(tjet),
-            nMaxwellians,
-            skip=skip,
-            old_covs=None,
-            old_means=None,
-            old_priors=None,
-        )
+        try:
+            tjet_means, tjet_covs, tjet_priors = fit_gmm(
+                ci,
+                int(tjet),
+                nMaxwellians,
+                skip=skip,
+                old_covs=None,
+                old_means=None,
+                old_priors=None,
+            )
+        except:
+            print("No VDF at tjet, exiting")
+            return None
         if not tjet_only:
             old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
             for fnr in fnr_arr_pre:
