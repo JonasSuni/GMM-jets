@@ -1,7 +1,8 @@
 import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
-import torch
+
+# import torch
 from pomegranate.gmm import GeneralMixtureModel
 from pomegranate.distributions import *
 from copy import deepcopy
