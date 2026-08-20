@@ -423,10 +423,10 @@ def plot_loglikelihoods():
 
 def process_all_gmm(nMaxwellians=1, inertia=0.0, mincov=0.0, skip=True, maxiter=1000):
 
-    dirlist = os.listdir(wrkdir_DNR + "vdf_txts")
+    dirlist = os.listdir(wrkdir_DNR + "vdf_txts_new")
     cellids = np.array([d[1:] for d in dirlist]).astype(int)
     for ci in cellids:
-        fnrlist = os.listdir(wrkdir_DNR + "vdf_txts/c{}".format(ci))
+        fnrlist = os.listdir(wrkdir_DNR + "vdf_txts_new/c{}".format(ci))
         fnrs = np.array([f.split(".")[0][1:] for f in fnrlist])
         for fnr in fnrs:
             fit_gmm(
