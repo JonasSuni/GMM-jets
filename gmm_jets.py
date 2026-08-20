@@ -456,6 +456,7 @@ def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30, tjet_only=Fa
 
     for p in all_data:
         ci, t0, t1, tjet = p
+        print(ci, t0, t1, tjet)
         fnr_arr_pre = np.arange(t0 - prepost_time, tjet, 1, dtype=int)[::-1]
         fnr_arr_post = np.arange(tjet + 1, t1 + prepost_time + 0.1, 1, dtype=int)
         try:
