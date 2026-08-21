@@ -296,6 +296,7 @@ def plot_jet_loglikes(
         )
         plt.close(fig)
 
+
 def plot_jet_bic_tjet(nMaxwellians=4):
 
     outdir = wrkdir_DNR + "Figs/bics/"
@@ -347,6 +348,7 @@ def plot_jet_bic_tjet(nMaxwellians=4):
         )
         plt.close(fig)
 
+
 def calc_bic(nMaxwellians, ci, fnr):
 
     try:
@@ -364,7 +366,8 @@ def calc_bic(nMaxwellians, ci, fnr):
 
     d = nMaxwellians * 3 * (3 + 1) / 2.0
 
-    return -2 * loglikelihood * sample_len + d * np.log(sample_len)
+    return -2 * loglikelihood + d * np.log(sample_len)
+
 
 def plot_bic_tjet(ax, nMaxwellians, ci, tjet):
 
@@ -372,12 +375,13 @@ def plot_bic_tjet(ax, nMaxwellians, ci, tjet):
     bic_arr = np.zeros(nMaxwellians, dtype=float)
 
     for idx in range(nMaxwellians):
-        bic_arr[idx] = calc_bic(maxwell_arr[idx],ci,tjet)
+        bic_arr[idx] = calc_bic(maxwell_arr[idx], ci, tjet)
 
     ax.plot(maxwell_arr, bic_arr, "o-")
     ax.set_xlim(1 - 0.1, nMaxwellians + 0.1)
     ax.grid()
     ax.set(xlabel="# Maxwellians", ylabel="Log-likelihood")
+
 
 def plot_loglike_tjet(ax, nMaxwellians, ci, tjet, penalty=True, skip_mono=False):
 
@@ -414,7 +418,6 @@ def plot_loglike_tjet(ax, nMaxwellians, ci, tjet, penalty=True, skip_mono=False)
         ax.set_xlim(1 - 0.1, nMaxwellians + 0.1)
     ax.grid()
     ax.set(xlabel="# Maxwellians", ylabel="Log-likelihood")
-
 
 
 def plot_loglike_onejet(
