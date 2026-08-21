@@ -296,6 +296,88 @@ def plot_jet_loglikes(
         )
         plt.close(fig)
 
+def plot_jet_bic_tjet(nMaxwellians=4):
+
+    outdir = wrkdir_DNR + "Figs/bics/"
+    create_dir_if_not_exist(outdir)
+    create_dir_if_not_exist(outdir + "archer")
+    create_dir_if_not_exist(outdir + "koller")
+    create_dir_if_not_exist(outdir + "archerkoller")
+
+    archer_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/archer_intervals_new.txt", dtype=int
+    )
+    koller_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/koller_intervals_new.txt", dtype=int
+    )
+    archerkoller_data = np.loadtxt(
+        wrkdir_DNR + "txts/jet_intervals/archerkoller_intervals_new.txt", dtype=int
+    )
+
+    for p in archer_data:
+        ci, t0, t1, tjet = p
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
+        plot_bic_tjet(ax, nMaxwellians, ci, tjet)
+        fig.savefig(
+            outdir + "archer/c{}_t{}_{}.png".format(ci, t0, t1),
+            dpi=300,
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+
+    for p in koller_data:
+        ci, t0, t1, tjet = p
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
+        plot_bic_tjet(ax, nMaxwellians, ci, tjet)
+        fig.savefig(
+            outdir + "koller/c{}_t{}_{}.png".format(ci, t0, t1),
+            dpi=300,
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+
+    for p in archerkoller_data:
+        ci, t0, t1, tjet = p
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6), layout="compressed")
+        plot_bic_tjet(ax, nMaxwellians, ci, tjet)
+        fig.savefig(
+            outdir + "archerkoller/c{}_t{}_{}.png".format(ci, t0, t1),
+            dpi=300,
+            bbox_inches="tight",
+        )
+        plt.close(fig)
+
+def calc_bic(nMaxwellians, ci, fnr):
+
+    try:
+        data = np.loadtxt(
+            wrkdir_DNR
+            + "vdf_gmm_new/n{}/c{}/f{}.fit".format(nMaxwellians, ci, int(fnr)),
+            ndmin=2,
+        )
+    except:
+        print("Something went wrong when reading loglike")
+        return np.nan
+
+    sample_len = data[0][-1]
+    loglikelihood = data[0][-2]
+
+    d = nMaxwellians * 3 * (3 + 1) / 2.0
+
+    return -2 * loglikelihood * sample_len + d * np.log(sample_len)
+
+def plot_bic_tjet(ax, nMaxwellians, ci, tjet):
+
+    maxwell_arr = np.arange(1, nMaxwellians + 1)
+    bic_arr = np.zeros(nMaxwellians, dtype=float)
+
+    for idx in range(nMaxwellians):
+        bic_arr[idx] = calc_bic(maxwell_arr[idx],ci,tjet)
+
+    ax.plot(maxwell_arr, bic_arr, "o-")
+    ax.set_xlim(1 - 0.1, nMaxwellians + 0.1)
+    ax.grid()
+    ax.set(xlabel="# Maxwellians", ylabel="Log-likelihood")
 
 def plot_loglike_tjet(ax, nMaxwellians, ci, tjet, penalty=True, skip_mono=False):
 
@@ -332,6 +414,7 @@ def plot_loglike_tjet(ax, nMaxwellians, ci, tjet, penalty=True, skip_mono=False)
         ax.set_xlim(1 - 0.1, nMaxwellians + 0.1)
     ax.grid()
     ax.set(xlabel="# Maxwellians", ylabel="Log-likelihood")
+
 
 
 def plot_loglike_onejet(
