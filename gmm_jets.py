@@ -72,8 +72,13 @@ def fit_gmm(
         and skip
         and not debug
     ):
-        print("File already exists and skip is True, exiting.")
-        return None
+        print("File already exists and skip is True, returning fit instead.")
+        fit = np.loadtxt(outdir + "n{}/c{}/f{}.fit".format(nMaxwellians, cellid, fnr))
+        weights = fit[:, 0].tolist()
+        means = fit[:, [1, 2, 3]].tolist()
+        covs = fit[:, [4, 5, 6, 7, 8, 9, 10, 11, 12]].tolist()
+        covs_new = [np.reshape(cov, (3, 3)) for cov in covs]
+        return (means, covs_new, weights)
 
     try:
         vc_coord_arr, vc_val_arr = read_file(cellid, fnr)
