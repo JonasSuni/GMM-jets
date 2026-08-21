@@ -472,7 +472,7 @@ def process_all_jet_gmm(nMaxwellians=4, skip=True, prepost_time=30, tjet_only=Fa
             )
         except:
             print("No VDF at tjet, exiting")
-            return None
+            continue
         if not tjet_only:
             old_means, old_covs, old_priors = (tjet_means, tjet_covs, tjet_priors)
             for fnr in fnr_arr_pre:
