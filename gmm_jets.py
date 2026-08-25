@@ -110,30 +110,32 @@ def fit_gmm(
             )
 
     else:
-        onemodel = Normal().fit(vc_coord_arr, sample_weight=vc_val_arr)
-        onecovs = onemodel.covs
-        onemeans = onemodel.means
-        cov_sphere = np.trace(onecovs.numpy()) / 3.0
-        std_sphere = np.sqrt(cov_sphere)
+        # onemodel = Normal().fit(vc_coord_arr, sample_weight=vc_val_arr)
+        # onecovs = onemodel.covs
+        # onemeans = onemodel.means
+        # cov_sphere = np.trace(onecovs.numpy()) / 3.0
+        # std_sphere = np.sqrt(cov_sphere)
 
-        thetas = np.linspace(0, 2 * np.pi, nMaxwellians + 1)[:-1]
+        # thetas = np.linspace(0, 2 * np.pi, nMaxwellians + 1)[:-1]
 
-        det_means = []
-        for idx in range(thetas.size):
-            det_means.append(
-                onemeans.numpy()
-                + std_sphere * np.array([np.cos(thetas[idx]), np.sin(thetas[idx]), 0.0])
-            )
+        # det_means = []
+        # for idx in range(thetas.size):
+        #     det_means.append(
+        #         onemeans.numpy()
+        #         + std_sphere * np.array([np.cos(thetas[idx]), np.sin(thetas[idx]), 0.0])
+        #     )
 
+        # for idx in range(nMaxwellians):
+        #     distribs.append(
+        #         Normal(
+        #             means=deepcopy(det_means[idx].astype(float)),
+        #             min_cov=mincov,
+        #             covs=deepcopy(onecovs.numpy().astype(float)),
+        #             covariance_type="full",
+        #         )
+        #     )
         for idx in range(nMaxwellians):
-            distribs.append(
-                Normal(
-                    means=deepcopy(det_means[idx].astype(float)),
-                    min_cov=mincov,
-                    covs=deepcopy(onecovs.numpy().astype(float)),
-                    covariance_type="full",
-                )
-            )
+            distribs.append(Normal(min_cov=mincov, covariance_type="full"))
 
     if nMaxwellians == 1:
         model = distribs[0].fit(vc_coord_arr, sample_weight=vc_val_arr)
