@@ -57,7 +57,7 @@ def fit_gmm(
     nMaxwellians,
     inertia=0.0,
     debug=False,
-    mincov=0.0,
+    mincov=1e-6,
     skip=True,
     maxiter=1000,
     old_means=None,
@@ -106,6 +106,7 @@ def fit_gmm(
                     means=deepcopy(old_means[idx]),
                     covs=deepcopy(old_covs[idx]),
                     covariance_type="full",
+                    min_cov=mincov,
                 )
             )
 
