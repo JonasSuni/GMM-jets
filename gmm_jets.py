@@ -383,7 +383,7 @@ def plot_bic_tjet(ax, nMaxwellians, ci, tjet):
     ax.plot(maxwell_arr, bic_arr, "o-")
     ax.set_xlim(1 - 0.1, nMaxwellians + 0.1)
     ax.grid()
-    ax.set(xlabel="# Maxwellians", ylabel="Log-likelihood")
+    ax.set(xlabel="# Maxwellians", ylabel="BIC")
 
 
 def plot_loglike_tjet(ax, nMaxwellians, ci, tjet, penalty=True, skip_mono=False):
